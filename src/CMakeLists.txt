@@ -2,4 +2,6 @@ cmake_minimum_required(VERSION 3.29)
 
 project(Bombov)
 
-add_executable(Bombov main.cpp)
+set(CMAKE_CXX_STANDARD 23)
+
+add_executable(Bombov Map.cpp main.cpp)
