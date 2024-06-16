@@ -2,6 +2,10 @@
 #include <print> 
 #include <memory>
 #include "Context.h"
+#include "ControllerType.h"
+#include "ControllersClosures.h"
+
+using namespace DemensDeum::Bombov;
 
 int main(int argc, char **argv) {
  
@@ -9,14 +13,17 @@ int main(int argc, char **argv) {
 
     auto isRun = std::make_shared<bool>(true);
 
-    auto startControllerClosure = []() {
-        std::print("Controller Closure Step\n");
-    };
+    auto context = std::make_shared<Context>(isRun);
+    auto startController = std::make_shared<Controller>(
+        InGameController,
+        context,
+        context,
+        startControllerClosure
+    );
+    context->setController(InGameController, startController);
+    context->switchCurrentController(InGameController);
 
-    auto startController = std::make_shared<DemensDeum::Bombov::Controller>(startControllerClosure);
-    auto context = std::make_shared<DemensDeum::Bombov::Context>(isRun, startController);
-
-    while (isRun) {
+    while (*isRun) {
         context->step();
     }
 

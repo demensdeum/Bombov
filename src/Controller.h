@@ -3,16 +3,27 @@
 #include <functional>
 #include "Scene.h"
 #include <memory>
+#include "ControllerType.h"
+#include "ControllerDataSource.h"
+#include "ControllerDelegate.h"
 
 namespace DemensDeum::Bombov {
 
 class Controller {
 public:
-    Controller(const std::function<void()>& inputStepClosure);
+    Controller(
+        DemensDeum::Bombov::ControllerType controllerType,
+        std::shared_ptr<ControllerDataSource> dataSource,
+        std::shared_ptr<ControllerDelegate> delegate,
+        const std::function<void(DemensDeum::Bombov::ControllerType controllerType, std::shared_ptr<ControllerDataSource> controllerDataSource, std::shared_ptr<ControllerDelegate> controllerDelegate)>& inputStepClosure
+    );
     void step();
 
 private:
-    const std::function<void()> stepClosure;
+    DemensDeum::Bombov::ControllerType controllerType;
+    std::shared_ptr<ControllerDataSource> dataSource;
+    std::shared_ptr<ControllerDelegate> delegate;
+    const std::function<void(DemensDeum::Bombov::ControllerType controllerType, std::shared_ptr<ControllerDataSource> controllerDataSource, std::shared_ptr<ControllerDelegate> controllerDelegate)> stepClosure;
 };
 
 }
