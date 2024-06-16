@@ -1,19 +1,24 @@
 #include <iostream>
-#include "Map.h"
-#include <print>
+#include <print> 
+#include <memory>
+#include "Context.h"
 
 int main(int argc, char **argv) {
-    auto map = new DemensDeum::Bombov::Map(256, 256);
+ 
+    std::print("Hello Bombov!\n");
 
-    const uint x = 10;
-    const uint y = 10;
+    auto isRun = std::make_shared<bool>(true);
 
-    map->setSolid(false, x, y);
+    auto startControllerClosure = []() {
+        std::print("Controller Closure Step\n");
+    };
 
-    std::cout << "Hello Bombov" << std::endl;
+    auto startController = std::make_shared<DemensDeum::Bombov::Controller>(startControllerClosure);
+    auto context = std::make_shared<DemensDeum::Bombov::Context>(isRun, startController);
 
-    if (!map->getTile(x, y)->isSolid()) {
-        std::print("{0} {1} tile is not solid\n", x, y);
+    while (isRun) {
+        context->step();
     }
 
+    std::print("Bye Bombov!\n");
 }
