@@ -10,10 +10,6 @@ int main(int argc, char **argv) {
 
     map->setSolid(false, x, y);
 
-    // auto tile = map->getTile(10, 10);
-    // tile->setSolid(false);
-    // map->setTile(tile, 10, 10);
-
     std::cout << "Hello Bombov" << std::endl;
 
     if (!map->getTile(x, y)->isSolid()) {
