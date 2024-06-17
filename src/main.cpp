@@ -18,6 +18,7 @@ int main(int argc, char **argv) {
 
     auto isRun = std::make_shared<bool>(true);
     auto render = std::make_shared<OpenGLRender>();
+    render->setWindow(system->window);
 
     auto context = std::make_shared<Context>(render, isRun);
     auto startController = std::make_shared<Controller>(

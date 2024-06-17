@@ -1,5 +1,4 @@
 #include "SDLSystem.h"
-#include <SDL2/SDL.h>
 #include <GL/glew.h>
 #include <string>
 #include <stdexcept>
@@ -20,7 +19,7 @@ void SDLSystem::init(GraphicsApiType graphicsApiType) {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
 
-        auto window = SDL_CreateWindow(
+        window = SDL_CreateWindow(
             "Bombov", 
             SDL_WINDOWPOS_CENTERED, 
             SDL_WINDOWPOS_CENTERED, 
