@@ -21,6 +21,7 @@ public:
 
 private:
     DemensDeum::Bombov::ControllerType controllerType;
+    std::shared_ptr<std::unordered_map<std::string, std::string>> globals;
     std::shared_ptr<ControllerDataSource> dataSource;
     std::shared_ptr<ControllerDelegate> delegate;
     const std::function<void(DemensDeum::Bombov::ControllerType controllerType, std::shared_ptr<ControllerDataSource> controllerDataSource, std::shared_ptr<ControllerDelegate> controllerDelegate)> stepClosure;

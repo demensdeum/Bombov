@@ -1,7 +1,8 @@
 #include <memory>
-#include <ControllerType.h>
-#include <ControllerDelegate.h>
-#include <ControllerDataSource.h>
+#include "ControllerType.h"
+#include "ControllerDelegate.h"
+#include "ControllerDataSource.h"
+#include <unordered_map>
 
 namespace DemensDeum::Bombov {
 auto startControllerClosure = [](
@@ -10,6 +11,19 @@ auto startControllerClosure = [](
     std::shared_ptr<ControllerDelegate> controllerDelegate
 ) {
     std::print("Controller Closure Step\n");
-    controllerDelegate->controllerDidRequestQuit(controllerType);
+
+    auto globals = controllerDataSource->globalsForController(controllerType);
+    if (globals->contains("closeCounter")) {
+        auto closeCounter = std::stoi((*globals)["closeCounter"]);
+        closeCounter++;
+        if (closeCounter > 100000) {
+            controllerDelegate->controllerDidRequestQuit(controllerType);
+        }
+        (*globals)["closeCounter"] = std::to_string(closeCounter);
+    }
+    else {
+        (*globals)["closeCounter"] = "0";
+    }
+
 };
 }
