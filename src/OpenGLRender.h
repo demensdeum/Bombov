@@ -1,5 +1,6 @@
 #pragma once
 
+#include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include "Render.h"
 
@@ -14,9 +15,12 @@ public:
     void render() override;
 
 private:
+
+    void CheckCompileErrors(GLuint object, const std::string objectType);
+    void CheckLinkErrors(GLint programID);
+
     std::shared_ptr<Scene> scene;
     SDL_Window *window;
-
 };
 
 }
