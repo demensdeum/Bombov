@@ -27,7 +27,7 @@ private:
 #if BOMBOV_GAME_GLM_ENABLED
     glm::mat4 matrix;
 #else
-    std::array<float, 4 * 4> matrix;
+    std::array<std::array<float, 4>, 4> matrix;
 #endif
 
 };
