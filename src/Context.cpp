@@ -5,10 +5,10 @@
 namespace DemensDeum::Bombov {
 
 Context::Context(
-    std::shared_ptr<Render> render,
+    std::shared_ptr<SDLSystem> system,
     std::shared_ptr<bool>isRun
 ) : isRun(isRun), 
-    render(render) {
+    system(system) {
         globals = std::make_shared<std::unordered_map<std::string, std::string>>();
         scene = std::make_shared<Scene>();
     }
@@ -36,9 +36,10 @@ void Context::switchCurrentController(
 }
 
 void Context::step() { 
+    system->pollEvents();
     currentController->step();
-    render->setScene(scene);
-    render->render();
+    system->render->setScene(scene);
+    system->render->render();
 }
 
 }

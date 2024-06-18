@@ -16,9 +16,9 @@ auto startControllerClosure = [](
         auto closeCounter = std::stoi((*globals)["closeCounter"]);
         closeCounter++;
         std::print("closeCounter: {0}\n", closeCounter);
-        if (closeCounter > 100) {
-            controllerDelegate->controllerDidRequestQuit(controllerType);
-        }
+        // if (closeCounter > 5000) {
+        //     controllerDelegate->controllerDidRequestQuit(controllerType);
+        // }
         (*globals)["closeCounter"] = std::to_string(closeCounter);
     }
     else {

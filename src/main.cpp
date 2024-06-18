@@ -17,10 +17,8 @@ int main(int argc, char **argv) {
     system->init(OpenGL);
 
     auto isRun = std::make_shared<bool>(true);
-    auto render = std::make_shared<OpenGLRender>();
-    render->setWindow(system->window);
 
-    auto context = std::make_shared<Context>(render, isRun);
+    auto context = std::make_shared<Context>(system, isRun);
     auto startController = std::make_shared<Controller>(
         InGameController,
         context,
@@ -30,7 +28,7 @@ int main(int argc, char **argv) {
     context->setController(InGameController, startController);
     context->switchCurrentController(InGameController);
 
-    while (*isRun) {
+    while (*isRun && system->isRun) {
         context->step();
     }
 

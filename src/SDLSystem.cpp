@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <string>
 #include <stdexcept>
+#include "OpenGLRender.h"
 
 namespace DemensDeum::Bombov {
 
@@ -10,6 +11,8 @@ int SDLSystem::screenHeight = 480;
 float SDLSystem::screenAspect = (float)screenHeight / (float)screenWidth;
 
 void SDLSystem::init(GraphicsApiType graphicsApiType) {
+
+    isRun = true;
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) {
         std::string error = "Unable to initialize SDL: " + std::string(SDL_GetError());
@@ -49,6 +52,19 @@ void SDLSystem::init(GraphicsApiType graphicsApiType) {
         }
 
         SDL_GL_MakeCurrent(window, glContext);
+
+        auto render = std::make_shared<OpenGLRender>();
+        render->setWindow(window);
+        this->render = render;
+    }
+}
+
+void SDLSystem::pollEvents() {
+    SDL_Event e;
+    if (SDL_PollEvent(&e) != 0) {    
+        if (e.type == SDL_QUIT) {
+            isRun = false;
+        }
     }
 }
 
