@@ -144,6 +144,33 @@ void OpenGLRender::CheckLinkErrors(GLint programID)
 	}
 }
 
+auto texture = SDL_LoadBMP("brick.texture.bmp");
+
+SDL_Surface* duplicateSurface(SDL_Surface* original) {
+    if (!original) {
+        fprintf(stderr, "Original surface is NULL!\n");
+        return NULL;
+    }
+
+    SDL_Surface* duplicate = SDL_CreateRGBSurfaceWithFormat(0, 
+                                                            original->w, 
+                                                            original->h, 
+                                                            original->format->BitsPerPixel, 
+                                                            original->format->format);
+    if (!duplicate) {
+        fprintf(stderr, "SDL_CreateRGBSurfaceWithFormat Error: %s\n", SDL_GetError());
+        return NULL;
+    }
+
+    if (SDL_BlitSurface(original, NULL, duplicate, NULL) != 0) {
+        fprintf(stderr, "SDL_BlitSurface Error: %s\n", SDL_GetError());
+        SDL_FreeSurface(duplicate);
+        return NULL;
+    }
+
+    return duplicate;
+}
+
 void OpenGLRender::render() {
 
 	auto camera = scene->getCamera();
@@ -154,13 +181,15 @@ void OpenGLRender::render() {
 	auto textureWidth = 256;
 	auto textureHeight = 256;
 
-	auto surface = SDL_CreateRGBSurfaceWithFormat(
-                                                0, 
-                                                textureWidth, 
-                                            	textureHeight, 
-                                                24, 
-                                                SDL_PIXELFORMAT_RGB24
-												);
+    auto surface = duplicateSurface(texture);
+
+	// auto surface = SDL_CreateRGBSurfaceWithFormat(
+    //                                             0, 
+    //                                             textureWidth, 
+    //                                         	   textureHeight, 
+    //                                             24, 
+    //                                             SDL_PIXELFORMAT_BGR24
+	// 											);
 
 	std::vector<Vertex> verticesVector = verticesVectorFromMap(scene->getMap());
 	std::vector<GLuint> indicesVector;
@@ -241,7 +270,7 @@ void OpenGLRender::render() {
     glEnableVertexAttribArray(uvSlot);
 
 	if (surface == nullptr) {
-		throw std::runtime_error("CANT LOAD TEXT_TEXTURE!!!");
+		throw std::runtime_error("CANT LOAD TEXTURE!!!");
 	}
 
     auto surfaceLength = surface->w * surface->h * 3;
@@ -253,7 +282,17 @@ void OpenGLRender::render() {
     glBindTexture(GL_TEXTURE_2D, textureBinding);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, palleteMode, surface->w, surface->h, 0, palleteMode, GL_UNSIGNED_BYTE, surface->pixels);
+	glTexImage2D(
+        GL_TEXTURE_2D,
+        0, 
+        palleteMode, 
+        surface->w, 
+        surface->h, 
+        0, 
+        palleteMode, 
+        GL_UNSIGNED_BYTE, 
+        surface->pixels
+    );
     
 	glActiveTexture(GL_TEXTURE0);
 

@@ -11,8 +11,6 @@ class Camera {
 public:
     Camera();
     std::shared_ptr<Matrix4> viewMatrix();
-
-private:
     std::shared_ptr<DemensDeum::Bombov::Vector3> position;
     std::shared_ptr<DemensDeum::Bombov::Vector3> rotation;
 };
