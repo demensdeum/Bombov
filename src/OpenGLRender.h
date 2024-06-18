@@ -3,6 +3,8 @@
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include "Render.h"
+#include <memory>
+#include <vector>
 
 namespace DemensDeum::Bombov {
 
@@ -15,6 +17,13 @@ public:
     void render() override;
 
 private:
+
+    typedef struct {
+        GLfloat Position[3];
+        GLfloat TextureUV[2];
+    } Vertex;
+
+    std::vector<Vertex> verticesVectorFromMap(std::shared_ptr<Map> map);
 
     void CheckCompileErrors(GLuint object, const std::string objectType);
     void CheckLinkErrors(GLint programID);

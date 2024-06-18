@@ -10,6 +10,7 @@ Context::Context(
 ) : isRun(isRun), 
     render(render) {
         globals = std::make_shared<std::unordered_map<std::string, std::string>>();
+        scene = std::make_shared<Scene>();
     }
 
 void Context::setController(ControllerType controllerType, std::shared_ptr<Controller> controller) {
@@ -36,6 +37,7 @@ void Context::switchCurrentController(
 
 void Context::step() { 
     currentController->step();
+    render->setScene(scene);
     render->render();
 }
 

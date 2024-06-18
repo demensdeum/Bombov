@@ -31,6 +31,7 @@ private:
     std::shared_ptr<bool> isRun;
     std::shared_ptr<Render> render;
     std::shared_ptr<std::unordered_map<std::string, std::string>> globals;
+    std::shared_ptr<Scene> scene;
 };
 
 }

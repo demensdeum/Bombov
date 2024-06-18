@@ -5,6 +5,10 @@
 
 namespace DemensDeum::Bombov {
 
+int SDLSystem::screenWidth = 640;
+int SDLSystem::screenHeight = 480;
+float SDLSystem::screenAspect = (float)screenHeight / (float)screenWidth;
+
 void SDLSystem::init(GraphicsApiType graphicsApiType) {
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) {

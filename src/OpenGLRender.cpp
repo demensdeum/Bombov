@@ -2,6 +2,8 @@
 #include <print>
 #include <vector>
 
+#include <SDLSystem.h>
+
 namespace DemensDeum::Bombov {
 
 const std::string vertexShadersCode =
@@ -31,12 +33,80 @@ const std::string fragmentShadersCode =
         gl_FragColor = texture2D(texture, uvOut);
     })";
 
-typedef struct {
-    GLfloat Position[3];
-	GLfloat TextureUV[2];
-} Vertex;
-
 OpenGLRender::OpenGLRender() {}
+
+std::vector<OpenGLRender::Vertex> OpenGLRender::verticesVectorFromMap(std::shared_ptr<Map> map) {
+  std::vector<Vertex> vertices;
+
+  for (int y = 0; y < map->height; ++y) {
+    for (int x = 0; x < map->width; ++x) {
+
+      if (map->isSolid(x, y)) {
+
+        float cubeX0 = x;
+        float cubeY0 = y;
+        float cubeZ0 = 0.0f;
+        float cubeSize = 1.0f;
+
+        float texX0 = 0.0f;
+        float texY0 = 0.0f;
+        float texX1 = 1.0f;
+        float texY1 = 1.0f;
+
+        // Front face
+        vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY1}});
+        vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY1}});
+        vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX1, texY0}});
+        vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX0, texY0}});
+        vertices.emplace_back(vertices.back());  // Duplicate last vertex for triangle strip
+        vertices.emplace_back(vertices[0]);    // Duplicate first vertex for triangle strip
+
+        // Back face
+        vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY1}});
+        vertices.push_back({{cubeX0, cubeY0, cubeZ0 + cubeSize}, {texX0, texY1}});
+        vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY0}});
+        vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY0}});
+        vertices.emplace_back(vertices.back());  // Duplicate last vertex for triangle strip
+        vertices.emplace_back(vertices[vertices.size() - 6]);  // Duplicate second vertex for triangle strip (since back face is reversed)
+
+        // Top face
+        vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX0, texY0}});
+        vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX1, texY0}});
+        vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY1}});
+        vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY1}});
+        vertices.emplace_back(vertices.back());  // Duplicate last vertex for triangle strip
+        vertices.emplace_back(vertices[vertices.size() - 8]);  // Duplicate first vertex for triangle strip
+
+        // Bottom face
+        vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY0}});
+        vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY0}});
+        vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY1}});
+        vertices.push_back({{cubeX0, cubeY0, cubeZ0 + cubeSize}, {texX0, texY1}});
+
+        vertices.emplace_back(vertices.back());  // Duplicate last vertex for triangle strip
+        vertices.emplace_back(vertices[vertices.size() - 12]);  // Duplicate first vertex for triangle strip
+
+        // Left face
+        vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY1}});
+        vertices.push_back({{cubeX0, cubeY0, cubeZ0 + cubeSize}, {texX0, texY0}});
+        vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY0}});
+        vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX1, texY1}});
+        vertices.emplace_back(vertices.back());  // Duplicate last vertex for triangle strip
+        vertices.emplace_back(vertices[vertices.size() - 16]);  // Duplicate first vertex for triangle strip
+
+        // Right face
+        vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY1}});
+        vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY0}});
+        vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY0}});
+        vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX0, texY1}});
+        vertices.emplace_back(vertices.back());  // Duplicate last vertex for triangle strip
+        vertices.emplace_back(vertices[vertices.size() - 20]);  // Duplicate first vertex for triangle strip
+      }
+    }
+  }
+
+  return vertices;
+}
 
 void OpenGLRender::setWindow(SDL_Window *window) {
     this->window = window;
@@ -76,6 +146,8 @@ void OpenGLRender::CheckLinkErrors(GLint programID)
 
 void OpenGLRender::render() {
 
+	auto camera = scene->getCamera();
+
     glClearColor(0.2f, 0.35f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -90,22 +162,9 @@ void OpenGLRender::render() {
                                                 SDL_PIXELFORMAT_RGB24
 												);
 
-	std::vector<Vertex> verticesVector;
+	std::vector<Vertex> verticesVector = verticesVectorFromMap(scene->getMap());
 	std::vector<GLuint> indicesVector;
-
-	for (uint32_t i = 0; i < 8; i++)
-	{
-		float u = 0;
-		float v = 0;
-
-		Vertex vertex;
-		vertex.Position[0] = 1;
-		vertex.Position[1] = 1;
-		vertex.Position[2] = 1;
-		vertex.TextureUV[0] = u;
-		vertex.TextureUV[1] = v;
-
-		verticesVector.push_back(vertex);
+	for (int i = 0; i < verticesVector.size(); i++) {
 		indicesVector.push_back(i);
 	}
 
@@ -114,7 +173,7 @@ void OpenGLRender::render() {
 
 	GLsizei verticesSize = sizeof(Vertex) * verticesVector.size();
 	GLsizei indicesSize = sizeof(GLuint) * indicesVector.size(); 
-	GLsizei indicesCount = indicesVector.size();
+	GLsizei indicesCount = indicesVector.size(); // map->width * map->height * 6 sides * 2 triangles per side * 3 points per triangle
 
 	GLuint vertexShaderID, fragmentShaderID, GeometryShaderID;
 	vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -162,18 +221,23 @@ void OpenGLRender::render() {
 
     glUseProgram(shader_program);
 
-    auto modelMatrix = cubeMatrix;
-    GLint modelMatrixUniform = glGetUniformLocation(shader_program, "modelMatrix");
-    glUniformMatrix4fv(modelMatrixUniform, 1, GL_FALSE, modelMatrix->glRepresentation());
+    auto projectionMatrix = std::make_shared<Matrix4>();
+    projectionMatrix->becomePerspective(45.f, SDLSystem::screenAspect, 0, 800);
+    GLint projectionMatrixUniform = glGetUniformLocation(shader_program, "projectionMatrix");
+    glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, (const GLfloat *)projectionMatrix->glRepresentation());    
 
-    auto viewMatrix = camera->matrix();
+    auto cubesMatrix = std::make_shared<Matrix4>();
+    GLint modelMatrixUniform = glGetUniformLocation(shader_program, "modelMatrix");
+    glUniformMatrix4fv(modelMatrixUniform, 1, GL_FALSE, (const GLfloat *)cubesMatrix->glRepresentation());
+
+    auto viewMatrix = camera->viewMatrix();
     GLint viewMatrixUniform = glGetUniformLocation(shader_program, "viewMatrix");
-    glUniformMatrix4fv(viewMatrixUniform, 1, GL_FALSE, viewMatrix->glRepresentation());
+    glUniformMatrix4fv(viewMatrixUniform, 1, GL_FALSE, (const GLfloat *)viewMatrix->glRepresentation());
 
 	glActiveTexture(GL_TEXTURE0);
 
     GLint uvSlot = glGetAttribLocation(shader_program, "uvIn");
-    glVertexAttribPointer(uvSlot, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*) (sizeof(Vertex::Position)));
+    glVertexAttribPointer(uvSlot, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), offsetof(Vertex, Vertex::Position));
     glEnableVertexAttribArray(uvSlot);
 
 	if (surface == nullptr) {

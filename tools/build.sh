@@ -4,5 +4,5 @@ mkdir ./build
 cd build
 pwd
 cmake ../src/
-make -j 8
+make -j 16
 ./Bombov

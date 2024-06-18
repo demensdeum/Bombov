@@ -8,6 +8,9 @@
 namespace DemensDeum::Bombov {
 class Camera {
 
+public:
+    std::shared_ptr<Matrix4> viewMatrix();
+
 private:
     std::shared_ptr<DemensDeum::Bombov::Vector3> position;
     std::shared_ptr<DemensDeum::Bombov::Quaternion> rotation;
