@@ -168,14 +168,16 @@ void OpenGLRender::render() {
 	// std::vector<Vertex> verticesVector = verticesVectorFromMap(scene->getMap());
 
 	std::vector<Vertex> verticesVector;
-    // verticesVector.push_back(Vertex{{0.f, 0.f, -2.f}, {0.0f, 0.0f}});
-    // verticesVector.push_back(Vertex{{1.f, 0.f, -2.f}, {1.0f, 0.0f}});
-    // verticesVector.push_back(Vertex{{0.f, -1.f, -2.f}, {0.0f, 1.0f}});
 
-    verticesVector.push_back(Vertex{{-1.f, -1.f, 0.f}, {0.0f, 0.0f}});
-    verticesVector.push_back(Vertex{{0.f, 1.f, 0.f}, {1.0f, 0.0f}});
-    verticesVector.push_back(Vertex{{1.f, -1.f, 0.f}, {0.0f, 1.0f}});
+    // 2D
+    // verticesVector.push_back(Vertex{{-1.f, -1.f, 1.f}, {0.0f, 0.0f}});
+    // verticesVector.push_back(Vertex{{0.f, 1.f, 1.f}, {1.0f, 0.0f}});
+    // verticesVector.push_back(Vertex{{1.f, -1.f, 1.f}, {0.0f, 1.0f}});
 
+    // 3D
+    verticesVector.push_back(Vertex{{0.f, 1.f, 1.f}, {0.0f, 0.0f}});
+    verticesVector.push_back(Vertex{{0.f, 0.f, 1.f}, {1.0f, 0.0f}});
+    verticesVector.push_back(Vertex{{1.f, 0.f, 1.f}, {0.0f, 1.0f}});
 
 	std::vector<GLuint> indicesVector;
 	for (int i = 0; i < verticesVector.size(); i++) {
@@ -296,23 +298,15 @@ void OpenGLRender::render() {
 
     SDL_FreeSurface(surface);
 
-    //glEnable(GL_CULL_FACE);
-
     GLint textureSlot = glGetUniformLocation(shader_program, "texture");
     glUniform1i(textureSlot, 0);
 
-    // glDrawElements(
-	// 	GL_TRIANGLES, 
-	// 	indicesCount,
-    //     GL_UNSIGNED_INT, 
-	// 	0
-	// );
-
-    glDrawArrays(
-        GL_TRIANGLES,
-        0,
-        3
-    );
+    glDrawElements(
+		GL_TRIANGLES, 
+		indicesCount,
+        GL_UNSIGNED_INT, 
+		0
+	);
 
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &indexBuffer);

@@ -9,7 +9,7 @@ uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 
 void main() {
-    //gl_Position = projectionMatrix * viewMatrix * modelMatrix * vertex;
+    // gl_Position = projectionMatrix * viewMatrix * modelMatrix * vertex;
     gl_Position = vertex;
     uvOut = uvIn;
 })";
@@ -23,6 +23,6 @@ const std::string fragmentShadersCode =
     varying mediump vec2 uvOut;
     uniform sampler2D texture;
     void main() {
-        //gl_FragColor = texture2D(texture, uvOut);
-        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        gl_FragColor = texture2D(texture, uvOut);
+        //gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
     })";
