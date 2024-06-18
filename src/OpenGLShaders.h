@@ -9,8 +9,8 @@ uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 
 void main() {
-    // gl_Position = projectionMatrix * viewMatrix * modelMatrix * vertex;
-    gl_Position = vertex;
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vertex;
+    // gl_Position = vertex;
     uvOut = uvIn;
 })";
 

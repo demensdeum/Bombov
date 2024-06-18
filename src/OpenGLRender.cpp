@@ -175,9 +175,10 @@ void OpenGLRender::render() {
     // verticesVector.push_back(Vertex{{1.f, -1.f, 1.f}, {0.0f, 1.0f}});
 
     // 3D
-    verticesVector.push_back(Vertex{{0.f, 1.f, 1.f}, {0.0f, 0.0f}});
-    verticesVector.push_back(Vertex{{0.f, 0.f, 1.f}, {1.0f, 0.0f}});
-    verticesVector.push_back(Vertex{{1.f, 0.f, 1.f}, {0.0f, 1.0f}});
+    float testTriangleY = -1.f;
+    verticesVector.push_back(Vertex{{0.f, testTriangleY + 1.f, -3.f}, {0.0f, 0.0f}});
+    verticesVector.push_back(Vertex{{0.f, testTriangleY + 0.f, -3.f}, {1.0f, 0.0f}});
+    verticesVector.push_back(Vertex{{1.f, testTriangleY + 0.f, -3.f}, {0.0f, 1.0f}});
 
 	std::vector<GLuint> indicesVector;
 	for (int i = 0; i < verticesVector.size(); i++) {

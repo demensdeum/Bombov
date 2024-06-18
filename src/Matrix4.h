@@ -2,6 +2,11 @@
 
 #include <array>
 #include "Vector3.h"
+#include "Options.h"
+
+#if BOMBOV_GAME_GLM_ENABLED
+#include <glm/mat4x4.hpp>
+#endif
 
 namespace DemensDeum::Bombov {
 
@@ -19,7 +24,11 @@ public:
     Matrix4 operator*(const Matrix4& other) const;
 
 private:
-    std::array<float, 4 * 4> values;
+#if BOMBOV_GAME_GLM_ENABLED
+    glm::mat4 matrix;
+#else
+    std::array<float, 4 * 4> matrix;
+#endif
 
 };
 
