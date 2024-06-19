@@ -8,11 +8,13 @@ namespace DemensDeum::Bombov {
 
 int SDLSystem::screenWidth = 640;
 int SDLSystem::screenHeight = 480;
-float SDLSystem::screenAspect = (float)screenHeight / (float)screenWidth;
+float SDLSystem::screenAspect = (float)screenWidth / (float)screenHeight;
 
 void SDLSystem::init(GraphicsApiType graphicsApiType) {
 
     isRun = true;
+
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) {
         std::string error = "Unable to initialize SDL: " + std::string(SDL_GetError());
@@ -24,6 +26,9 @@ void SDLSystem::init(GraphicsApiType graphicsApiType) {
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
 
 
         window = SDL_CreateWindow(

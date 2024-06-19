@@ -10,77 +10,79 @@ namespace DemensDeum::Bombov {
 OpenGLRender::OpenGLRender() {}
 
 std::vector<OpenGLRender::Vertex> OpenGLRender::verticesVectorFromMap(std::shared_ptr<Map> map) {
-  std::vector<Vertex> vertices;
+    std::vector<Vertex> vertices;
+    float cubeSize = 1.f;
 
-  for (int y = 0; y < map->height; ++y) {
-    for (int x = 0; x < map->width; ++x) {
+    for (int y = 0; y < map->height; ++y) {
+        for (int x = 0; x < map->width; ++x) {
+            float cubeY0 = map->isSolid(x, y) ? 0 : -cubeSize;
+            float cubeX0 = -cubeSize + x * cubeSize;
+            float cubeZ0 = -1.f - y * cubeSize;
 
-      if (map->isSolid(x, y)) {
+            float texX0 = 0.0f;
+            float texY0 = 0.0f;
+            float texX1 = 1.0f;
+            float texY1 = 1.0f;
 
-        float cubeX0 = x;
-        float cubeY0 = y;
-        float cubeZ0 = 0.0f;
-        float cubeSize = 1.0f;
-
-        float texX0 = 0.0f;
-        float texY0 = 0.0f;
-        float texX1 = 1.0f;
-        float texY1 = 1.0f;
-
-        // Front face
-        vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY1}});
-        vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY1}});
-        vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX1, texY0}});
-        vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX0, texY0}});
-        vertices.emplace_back(vertices.back());
-        vertices.emplace_back(vertices[0]);
-
-        // Back face
-        vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY1}});
-        vertices.push_back({{cubeX0, cubeY0, cubeZ0 + cubeSize}, {texX0, texY1}});
-        vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY0}});
-        vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY0}});
-        vertices.emplace_back(vertices.back());
-        vertices.emplace_back(vertices[vertices.size() - 6]);
-
-        // Top face
-        vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX0, texY0}});
-        vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX1, texY0}});
-        vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY1}});
-        vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY1}});
-        vertices.emplace_back(vertices.back());
-        vertices.emplace_back(vertices[vertices.size() - 8]);
-
-        // Bottom face
-        vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY0}});
-        vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY0}});
-        vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY1}});
-        vertices.push_back({{cubeX0, cubeY0, cubeZ0 + cubeSize}, {texX0, texY1}});
-
-        vertices.emplace_back(vertices.back());
-        vertices.emplace_back(vertices[vertices.size() - 12]);
-
-        // Left face
-        vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY1}});
-        vertices.push_back({{cubeX0, cubeY0, cubeZ0 + cubeSize}, {texX0, texY0}});
-        vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY0}});
-        vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX1, texY1}});
-        vertices.emplace_back(vertices.back());
-        vertices.emplace_back(vertices[vertices.size() - 16]);
-
-        // Right face
-        vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY1}});
-        vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY0}});
-        vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY0}});
-        vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX0, texY1}});
-        vertices.emplace_back(vertices.back());
-        vertices.emplace_back(vertices[vertices.size() - 20]);
-      }
+            // Front face
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY1}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY1}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX1, texY0}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX0, texY0}});
+            
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY1}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX1, texY0}});
+            
+            // Back face
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY1}});
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0 + cubeSize}, {texX0, texY1}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY0}});
+            
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY1}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY0}});
+            
+            // Top face
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX0, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX1, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY1}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY1}});
+            
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX0, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY1}});
+            
+            // Bottom face
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY1}});
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0 + cubeSize}, {texX0, texY1}});
+            
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY1}});
+            
+            // Left face
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY1}});
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0 + cubeSize}, {texX0, texY0}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY0}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX1, texY1}});
+            
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY1}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY0}});
+            
+            // Right face
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY1}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX0, texY1}});
+            
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY1}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY0}});
+        }
     }
-  }
 
-  return vertices;
+    return vertices;
 }
+
 
 void OpenGLRender::setWindow(SDL_Window *window) {
     this->window = window;
@@ -147,10 +149,15 @@ SDL_Surface* duplicateSurface(SDL_Surface* original) {
 
 void OpenGLRender::render() {
 
+    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_CULL_FACE);
+
 	auto camera = scene->getCamera();
 
+    glViewport(0, 0, SDLSystem::screenWidth, SDLSystem::screenHeight);
+
     glClearColor(0.2f, 0.35f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	auto textureWidth = 256;
 	auto textureHeight = 256;
@@ -165,20 +172,21 @@ void OpenGLRender::render() {
     //                                             SDL_PIXELFORMAT_BGR24
 	// 											);
 
-	// std::vector<Vertex> verticesVector = verticesVectorFromMap(scene->getMap());
-
-	std::vector<Vertex> verticesVector;
+    // Map Cubes
+    std::vector<Vertex> verticesVector = verticesVectorFromMap(scene->getMap());
 
     // 2D
+	//std::vector<Vertex> verticesVector;
     // verticesVector.push_back(Vertex{{-1.f, -1.f, 1.f}, {0.0f, 0.0f}});
     // verticesVector.push_back(Vertex{{0.f, 1.f, 1.f}, {1.0f, 0.0f}});
     // verticesVector.push_back(Vertex{{1.f, -1.f, 1.f}, {0.0f, 1.0f}});
 
     // 3D
-    float testTriangleY = -1.f;
-    verticesVector.push_back(Vertex{{0.f, testTriangleY + 1.f, -3.f}, {0.0f, 0.0f}});
-    verticesVector.push_back(Vertex{{0.f, testTriangleY + 0.f, -3.f}, {1.0f, 0.0f}});
-    verticesVector.push_back(Vertex{{1.f, testTriangleY + 0.f, -3.f}, {0.0f, 1.0f}});
+	// std::vector<Vertex> verticesVector;    
+    // float testTriangleY = -1.f;
+    // verticesVector.push_back(Vertex{{0.f, testTriangleY + 1.f, -3.f}, {0.0f, 0.0f}});
+    // verticesVector.push_back(Vertex{{0.f, testTriangleY + 0.f, -3.f}, {1.0f, 0.0f}});
+    // verticesVector.push_back(Vertex{{1.f, testTriangleY + 0.f, -3.f}, {0.0f, 1.0f}});
 
 	std::vector<GLuint> indicesVector;
 	for (int i = 0; i < verticesVector.size(); i++) {
@@ -242,7 +250,7 @@ void OpenGLRender::render() {
     glEnableVertexAttribArray(uvSlot);
 
     auto projectionMatrix = std::make_shared<Matrix4>();
-    projectionMatrix->becomePerspective(45.f, SDLSystem::screenAspect, 0, 800);
+    projectionMatrix->becomePerspective(45.f, SDLSystem::screenAspect, 0.001f, 800.f);
     GLint projectionMatrixUniform = glGetUniformLocation(shader_program, "projectionMatrix");
     glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, (const GLfloat *)projectionMatrix->glRepresentation());    
 
@@ -281,7 +289,7 @@ void OpenGLRender::render() {
     GLuint textureBinding;
     glGenTextures(1, &textureBinding);
     glBindTexture(GL_TEXTURE_2D, textureBinding);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 	glTexImage2D(
         GL_TEXTURE_2D,
@@ -294,7 +302,8 @@ void OpenGLRender::render() {
         GL_UNSIGNED_BYTE, 
         surface->pixels
     );
-    
+    glGenerateMipmap(GL_TEXTURE_2D);
+
 	glActiveTexture(GL_TEXTURE0);
 
     SDL_FreeSurface(surface);

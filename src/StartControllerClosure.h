@@ -11,19 +11,7 @@ auto startControllerClosure = [](
     std::shared_ptr<ControllerDataSource> controllerDataSource, 
     std::shared_ptr<ControllerDelegate> controllerDelegate
 ) {
-    auto globals = controllerDataSource->globalsForController(controllerType);
-    if (globals->contains("closeCounter")) {
-        auto closeCounter = std::stoi((*globals)["closeCounter"]);
-        closeCounter++;
-        std::print("closeCounter: {0}\n", closeCounter);
-        // if (closeCounter > 5000) {
-        //     controllerDelegate->controllerDidRequestQuit(controllerType);
-        // }
-        (*globals)["closeCounter"] = std::to_string(closeCounter);
-    }
-    else {
-        (*globals)["closeCounter"] = "0";
-    }
-
+    auto camera = controllerDataSource->cameraForController(controllerType);
+    camera->position->z += 0.05;
 };
 }

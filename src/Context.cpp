@@ -25,6 +25,10 @@ std::shared_ptr<std::unordered_map<std::string, std::string>> Context::globalsFo
     return this->globals;
 }
 
+std::shared_ptr<Camera> Context::cameraForController(ControllerType controllerType) {
+    return scene->getCamera();
+}
+
 void Context::switchCurrentController(
     ControllerType controllerType
 ) {
