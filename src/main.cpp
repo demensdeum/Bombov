@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     std::print("Hello Bombov!\n");
 
     auto system = std::make_shared<SDLSystem>();
-    system->init(OpenGL);
+    system->init(Vulkan);
 
     auto isRun = std::make_shared<bool>(true);
 

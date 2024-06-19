@@ -22,6 +22,10 @@ public:
     SDL_Window *window;
 
     PressedButtons pressedButtons;
+
+private:
+    void initializeOpenGL();
+    void initializeVulkan();
 };
 
 }
