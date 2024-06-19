@@ -6,6 +6,7 @@
 #include "ControllerType.h"
 #include "InGameControllerClosure.h"
 #include "SDLSystem.h"
+#include "Options.h"
 
 using namespace DemensDeum::Bombov;
 
@@ -14,7 +15,7 @@ int main(int argc, char **argv) {
     std::print("Hello Bombov!\n");
 
     auto system = std::make_shared<SDLSystem>();
-    system->init(Vulkan);
+    system->init(BOMBOV_GAME_GRAPHICS_API);
 
     auto isRun = std::make_shared<bool>(true);
 
