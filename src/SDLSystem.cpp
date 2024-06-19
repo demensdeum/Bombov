@@ -55,6 +55,11 @@ void SDLSystem::initializeVulkan() {
 }
 
 void SDLSystem::quit() {
+    auto vulkanRender = static_pointer_cast<VulkanRender>(render);
+    vkDestroyDevice(vulkanRender->device, nullptr);
+    vkDestroyInstance(vulkanRender->vkInst, nullptr);
+    SDL_DestroyWindow(window);
+    SDL_Vulkan_UnloadLibrary();    
     SDL_Quit();    
 }
 
@@ -102,38 +107,37 @@ void SDLSystem::initializeOpenGL() {
 
 void SDLSystem::pollEvents() {
     SDL_Event e;
-    if (SDL_PollEvent(&e) != 0) {    
-        if (e.type == SDL_QUIT) {
-            pressedButtons.exitFromGame = true;
+    SDL_PollEvent(&e);
+    if (e.type == SDL_QUIT) {
+        pressedButtons.exitFromGame = true;
+    }
+    if (e.type == SDL_KEYDOWN){
+        if (e.key.keysym.sym == SDLK_UP) {
+            pressedButtons.forward = true;
         }
-        if (e.type == SDL_KEYDOWN){
-            if (e.key.keysym.sym == SDLK_UP) {
-                pressedButtons.forward = true;
-            }
-            if (e.key.keysym.sym == SDLK_DOWN) {
-                pressedButtons.back = true;
-            }
-            if (e.key.keysym.sym == SDLK_LEFT) {
-                pressedButtons.left = true;
-            }
-            if (e.key.keysym.sym == SDLK_RIGHT) {
-                pressedButtons.right = true;
-            }
+        if (e.key.keysym.sym == SDLK_DOWN) {
+            pressedButtons.back = true;
         }
-        if (e.type == SDL_KEYUP) {
-            if (e.key.keysym.sym == SDLK_UP) {
-                pressedButtons.forward = false;
-            }
-            if (e.key.keysym.sym == SDLK_DOWN) {
-                pressedButtons.back = false;
-            }
-            if (e.key.keysym.sym == SDLK_LEFT) {
-                pressedButtons.left = false;
-            }
-            if (e.key.keysym.sym == SDLK_RIGHT) {
-                pressedButtons.right = false;
-            }            
+        if (e.key.keysym.sym == SDLK_LEFT) {
+            pressedButtons.left = true;
         }
+        if (e.key.keysym.sym == SDLK_RIGHT) {
+            pressedButtons.right = true;
+        }
+    }
+    if (e.type == SDL_KEYUP) {
+        if (e.key.keysym.sym == SDLK_UP) {
+            pressedButtons.forward = false;
+        }
+        if (e.key.keysym.sym == SDLK_DOWN) {
+            pressedButtons.back = false;
+        }
+        if (e.key.keysym.sym == SDLK_LEFT) {
+            pressedButtons.left = false;
+        }
+        if (e.key.keysym.sym == SDLK_RIGHT) {
+            pressedButtons.right = false;
+        }            
     }
 }
 

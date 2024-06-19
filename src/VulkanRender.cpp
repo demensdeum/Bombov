@@ -86,6 +86,9 @@ void VulkanRender::setWindow(SDL_Window *window) {
     vkGetDeviceQueue(device, presentQueueIndex, 0, &presentQueue);
 
     SDL_Log("Initialized with errors: %s", SDL_GetError());
+
+    this->vkInst = vkInst;
+    this->device = device;
 }
 
 void VulkanRender::setScene(std::shared_ptr<Scene> scene) {
