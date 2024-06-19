@@ -4,7 +4,7 @@
 #include "OpenGLRender.h"
 #include "Context.h"
 #include "ControllerType.h"
-#include "StartControllerClosure.h"
+#include "InGameControllerClosure.h"
 #include "SDLSystem.h"
 
 using namespace DemensDeum::Bombov;
@@ -23,12 +23,12 @@ int main(int argc, char **argv) {
         InGameController,
         context,
         context,
-        startControllerClosure
+        inGameControllerClosure
     );
     context->setController(InGameController, startController);
     context->switchCurrentController(InGameController);
 
-    while (*isRun && system->isRun) {
+    while (*isRun && !system->pressedButtons.exitFromGame) {
         context->step();
     }
 

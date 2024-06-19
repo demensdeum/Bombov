@@ -24,6 +24,7 @@ public:
     void controllerDidRequestQuit(ControllerType controllerType);
     std::shared_ptr<std::unordered_map<std::string, std::string>> globalsForController(ControllerType controllerType) override;
     std::shared_ptr<Camera> cameraForController(ControllerType controllerType) override;
+    PressedButtons pressedButtonsForController(ControllerType controllerType) override;
 
 private:
     std::unordered_map<ControllerType, std::shared_ptr<Controller>> controllers;

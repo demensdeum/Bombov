@@ -12,8 +12,6 @@ float SDLSystem::screenAspect = (float)screenWidth / (float)screenHeight;
 
 void SDLSystem::init(GraphicsApiType graphicsApiType) {
 
-    isRun = true;
-
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) {
@@ -68,7 +66,35 @@ void SDLSystem::pollEvents() {
     SDL_Event e;
     if (SDL_PollEvent(&e) != 0) {    
         if (e.type == SDL_QUIT) {
-            isRun = false;
+            pressedButtons.exitFromGame = true;
+        }
+        if (e.type == SDL_KEYDOWN){
+            if (e.key.keysym.sym == SDLK_UP) {
+                pressedButtons.forward = true;
+            }
+            if (e.key.keysym.sym == SDLK_DOWN) {
+                pressedButtons.back = true;
+            }
+            if (e.key.keysym.sym == SDLK_LEFT) {
+                pressedButtons.left = true;
+            }
+            if (e.key.keysym.sym == SDLK_RIGHT) {
+                pressedButtons.right = true;
+            }
+        }
+        if (e.type == SDL_KEYUP) {
+            if (e.key.keysym.sym == SDLK_UP) {
+                pressedButtons.forward = false;
+            }
+            if (e.key.keysym.sym == SDLK_DOWN) {
+                pressedButtons.back = false;
+            }
+            if (e.key.keysym.sym == SDLK_LEFT) {
+                pressedButtons.left = false;
+            }
+            if (e.key.keysym.sym == SDLK_RIGHT) {
+                pressedButtons.right = false;
+            }            
         }
     }
 }

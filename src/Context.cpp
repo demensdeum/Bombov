@@ -29,6 +29,10 @@ std::shared_ptr<Camera> Context::cameraForController(ControllerType controllerTy
     return scene->getCamera();
 }
 
+PressedButtons Context::pressedButtonsForController(ControllerType controllerType) {
+    return system->pressedButtons;
+}
+
 void Context::switchCurrentController(
     ControllerType controllerType
 ) {
