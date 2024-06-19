@@ -318,6 +318,7 @@ void OpenGLRender::render() {
 		0
 	);
 
+    glDeleteProgram(shader_program);
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &indexBuffer);
     glDeleteTextures(1, &textureBinding);	
