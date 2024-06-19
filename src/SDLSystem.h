@@ -17,6 +17,8 @@ public:
     void init(GraphicsApiType graphicsApiType);
     void pollEvents();
 
+    void quit();
+
     std::shared_ptr<Render> render;
 
     SDL_Window *window;

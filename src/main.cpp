@@ -32,6 +32,7 @@ int main(int argc, char **argv) {
     while (*isRun && !system->pressedButtons.exitFromGame) {
         context->step();
     }
+    system->quit();
 
     std::print("Bye Bombov!\n");
 }

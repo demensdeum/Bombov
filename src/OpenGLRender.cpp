@@ -7,7 +7,9 @@
 
 namespace DemensDeum::Bombov {
 
-OpenGLRender::OpenGLRender() {}
+OpenGLRender::OpenGLRender() {
+    
+}
 
 std::vector<OpenGLRender::Vertex> OpenGLRender::verticesVectorFromMap(std::shared_ptr<Map> map) {
     std::vector<Vertex> vertices;

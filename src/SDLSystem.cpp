@@ -1,9 +1,12 @@
 #include "SDLSystem.h"
 #include <GL/glew.h>
+#include <print>
 #include <string>
 #include <stdexcept>
 #include "OpenGLRender.h"
 #include "VulkanRender.h"
+#include <SDL2/SDL_vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 namespace DemensDeum::Bombov {
 
@@ -34,11 +37,30 @@ void SDLSystem::init(GraphicsApiType graphicsApiType) {
 }
 
 void SDLSystem::initializeVulkan() {
+    const char *windowTitle = "Bombov (Vulkan)";
+
+    SDL_Vulkan_LoadLibrary(nullptr);
+    SDL_Window* window = SDL_CreateWindow(
+        windowTitle, 
+        SDL_WINDOWPOS_UNDEFINED, 
+        SDL_WINDOWPOS_UNDEFINED, 
+        screenWidth, 
+        screenHeight, 
+        SDL_WINDOW_VULKAN
+    );
+    
     auto render = std::make_shared<VulkanRender>();
+    render->setWindow(window);
     this->render = render;
 }
 
+void SDLSystem::quit() {
+    SDL_Quit();    
+}
+
 void SDLSystem::initializeOpenGL() {
+    const char *windowTitle = "Bombov (OpenGL)";
+
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
@@ -47,7 +69,7 @@ void SDLSystem::initializeOpenGL() {
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
 
     window = SDL_CreateWindow(
-        "Bombov", 
+        windowTitle, 
         SDL_WINDOWPOS_CENTERED, 
         SDL_WINDOWPOS_CENTERED, 
         640, 
