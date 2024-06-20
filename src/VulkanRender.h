@@ -11,7 +11,7 @@ public:
     void setScene(std::shared_ptr<Scene> scene) override;
     void render() override;
 
-    VkInstance vkInst;
+    VkInstance instance;
     VkDevice device;
 };
 

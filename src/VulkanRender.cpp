@@ -10,16 +10,17 @@ void VulkanRender::setWindow(SDL_Window *window) {
     SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr);
     extensionNames = new const char *[extensionCount];
     SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensionNames);
-    const VkInstanceCreateInfo instInfo = {
-        VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO, // sType
-        nullptr,                                // pNext
-        0,                                      // flags
-        nullptr,                                // pApplicationInfo
-        0,                                      // enabledLayerCount
-        nullptr,                                // ppEnabledLayerNames
-        extensionCount,                         // enabledExtensionCount
-        extensionNames,                         // ppEnabledExtensionNames
-    };
+    
+    VkInstanceCreateInfo instInfo = {};
+    instInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    instInfo.pNext = nullptr;
+    instInfo.flags = 0;
+    instInfo.pApplicationInfo = nullptr;
+    instInfo.enabledLayerCount = 0;
+    instInfo.ppEnabledLayerNames = nullptr;
+    instInfo.enabledExtensionCount = extensionCount;
+    instInfo.ppEnabledExtensionNames = extensionNames;
+
     VkInstance vkInst;
     vkCreateInstance(&instInfo, nullptr, &vkInst);
 
@@ -42,40 +43,41 @@ void VulkanRender::setWindow(SDL_Window *window) {
     VkBool32 support;
     uint32_t i = 0;
     for (VkQueueFamilyProperties queueFamily : queueFamilies) {
-        if (graphicsQueueIndex == UINT32_MAX && queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+        if (graphicsQueueIndex == UINT32_MAX && queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
             graphicsQueueIndex = i;
+        }
         if (presentQueueIndex == UINT32_MAX) {
             vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &support);
-            if(support)
+            if(support) {
                 presentQueueIndex = i;
+            }
         }
         ++i;
     }
 
     float queuePriority = 1.0f;
-    VkDeviceQueueCreateInfo queueInfo = {
-        VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO, // sType
-        nullptr,                                    // pNext
-        0,                                          // flags
-        graphicsQueueIndex,                         // graphicsQueueIndex
-        1,                                          // queueCount
-        &queuePriority,                             // pQueuePriorities
-    };
+    VkDeviceQueueCreateInfo queueInfo = {};
+    queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueInfo.pNext = nullptr;
+    queueInfo.flags = 0;
+    queueInfo.queueFamilyIndex = graphicsQueueIndex;
+    queueInfo.queueCount = 1;
+    queueInfo.pQueuePriorities = &queuePriority;
     
     VkPhysicalDeviceFeatures deviceFeatures = {};
     const char* deviceExtensionNames[] = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
-    VkDeviceCreateInfo createInfo = {
-        VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,   // sType
-        nullptr,                                // pNext
-        0,                                      // flags
-        1,                                      // queueCreateInfoCount
-        &queueInfo,                             // pQueueCreateInfos
-        0,                                      // enabledLayerCount
-        nullptr,                                // ppEnabledLayerNames
-        1,                                      // enabledExtensionCount
-        deviceExtensionNames,                   // ppEnabledExtensionNames
-        &deviceFeatures,                        // pEnabledFeatures
-    };
+    VkDeviceCreateInfo createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    createInfo.pNext = nullptr;
+    createInfo.flags = 0;
+    createInfo.queueCreateInfoCount = 1;
+    createInfo.pQueueCreateInfos = &queueInfo;
+    createInfo.enabledLayerCount = 0;
+    createInfo.ppEnabledLayerNames = nullptr;
+    createInfo.enabledExtensionCount = 1;
+    createInfo.ppEnabledExtensionNames = deviceExtensionNames;
+    createInfo.pEnabledFeatures = &deviceFeatures;
+
     VkDevice device;
     vkCreateDevice(physicalDevice, &createInfo, nullptr, &device);
 
@@ -87,7 +89,64 @@ void VulkanRender::setWindow(SDL_Window *window) {
 
     SDL_Log("Initialized with errors: %s", SDL_GetError());
 
-    this->vkInst = vkInst;
+    VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
+
+	VkPipelineLayoutCreateInfo		pipelineLayoutInfo = {};
+	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	pipelineLayoutInfo.setLayoutCount = 0;
+
+	if (
+        vkCreatePipelineLayout(
+            device, 
+            &pipelineLayoutInfo, 
+            nullptr, 
+            &pipelineLayout
+    ) != VK_SUCCESS) {
+		throw std::runtime_error("Pipeline: failed to create pipeline layout!");
+    }
+
+	VkShaderModule	shader = VK_NULL_HANDLE;
+	Data shaderSource("shaders/test-compute.comp.spv" );
+
+	VkShaderModuleCreateInfo moduleCreateInfo = {};
+
+	moduleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	moduleCreateInfo.codeSize = shaderSource.getLength();
+	moduleCreateInfo.pCode = reinterpret_cast<const uint32_t*>( shaderSource.getPtr());
+
+	if (
+        vkCreateShaderModule(
+            device, &moduleCreateInfo, nullptr, &shader ) != VK_SUCCESS ) {
+        throw std::runtime_error("Failed to create shader module!");
+    }
+		
+
+	VkPipelineShaderStageCreateInfo stageInfo = {};	
+	stageInfo.sType     = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	stageInfo.stage     = VK_SHADER_STAGE_COMPUTE_BIT;
+	stageInfo.module    = shader;
+	stageInfo.pName     = "main";    
+
+	VkComputePipelineCreateInfo	pipelineInfo = {};
+	pipelineInfo.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+	pipelineInfo.stage = stageInfo;
+	pipelineInfo.layout = pipelineLayout;
+
+	VkPipeline pipeline = VK_NULL_HANDLE;
+
+	if (
+        vkCreateComputePipelines(
+            device,
+            VK_NULL_HANDLE,
+            1,
+            &pipelineInfo,
+            nullptr,
+            &pipeline
+    ) != VK_SUCCESS ) {
+		throw std::runtime_error("Pipeline: failed to create compute pipeline!");
+    }
+
+    this->instance = vkInst;
     this->device = device;
 }
 
