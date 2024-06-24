@@ -6,12 +6,13 @@
 #include "OpenGLRender.h"
 #include "VulkanRender.h"
 #include <SDL2/SDL_vulkan.h>
-#include <vulkan/vulkan.hpp>
+#define GLFW_INCLUDE_VULKAN
+#include <vulkan/vulkan.h>
 
 namespace DemensDeum::Bombov {
 
-int SDLSystem::screenWidth = 640;
-int SDLSystem::screenHeight = 480;
+uint SDLSystem::screenWidth = 640;
+uint SDLSystem::screenHeight = 480;
 float SDLSystem::screenAspect = (float)screenWidth / (float)screenHeight;
 
 void SDLSystem::init(GraphicsApiType graphicsApiType) {

@@ -10,8 +10,8 @@ namespace DemensDeum::Bombov {
 class SDLSystem {
 
 public:
-    static int screenWidth;
-    static int screenHeight;
+    static uint screenWidth;
+    static uint screenHeight;
     static float screenAspect;
 
     void init(GraphicsApiType graphicsApiType);
