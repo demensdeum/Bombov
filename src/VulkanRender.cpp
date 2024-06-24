@@ -19,19 +19,6 @@ void VulkanRender::setWindow(SDL_Window* window) {
     createSyncObjects();
 }
 
-void VulkanRender::mainLoop() {
-    while (true) {
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                return;
-            }
-        }
-        drawFrame();
-    }
-    vkDeviceWaitIdle(device);
-}
-
 std::vector<const char*> VulkanRender::getRequiredExtensions() {
     uint32_t sdlExtensionCount = 0;
     if (!SDL_Vulkan_GetInstanceExtensions(window, &sdlExtensionCount, nullptr)) {
@@ -39,6 +26,7 @@ std::vector<const char*> VulkanRender::getRequiredExtensions() {
     }
     
     std::vector<const char*> extensions(sdlExtensionCount);
+    extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
     if (!SDL_Vulkan_GetInstanceExtensions(window, &sdlExtensionCount, extensions.data())) {
         throw std::runtime_error("failed to get SDL Vulkan extensions");
     }
@@ -63,24 +51,19 @@ void VulkanRender::createInstance() {
         createInfo.ppEnabledExtensionNames = extensions.data();
 
         VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
-        // if (checkValidationLayerSupport()) {
-            createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-            createInfo.ppEnabledLayerNames = validationLayers.data();
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
 
-            debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-            debugCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-                                              VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                                              VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-            debugCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-                                          VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-                                          VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-            debugCreateInfo.pfnUserCallback = debugCallback;
+        debugCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+        debugCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+                                            VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                                            VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+        debugCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+                                        VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                                        VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+        debugCreateInfo.pfnUserCallback = debugCallback;
 
-            createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
-        // } else {
-        //     createInfo.enabledLayerCount = 0;
-        //     createInfo.pNext = nullptr;
-        // }
+        createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
 
         if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
             throw std::runtime_error("failed to create instance!");
@@ -677,14 +660,14 @@ VkShaderModule VulkanRender::createShaderModule(const std::vector<char>& code) {
     return shaderModule;
 }
 
-void VulkanRender::setScene(std::shared_ptr<DemensDeum::Bombov::Scene> scene) {
-
+void VulkanRender::setScene(std::shared_ptr<Scene> scene) {
+    this->scene = scene;
 }
 
 void VulkanRender::render() {
-
+    drawFrame();
+    vkDeviceWaitIdle(device);
 }
-
 
 std::vector<char> VulkanRender::readFile(const std::string& filename) {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);

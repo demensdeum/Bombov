@@ -13,13 +13,13 @@
 #include <fstream>
 #include "Render.h"
 
+#include <memory>
+
 namespace DemensDeum::Bombov {
 
 class VulkanRender: public Render {
 public:
     void initVulkan(SDL_Window* window);
-    void mainLoop();
-    void cleanup();
 
     VkInstance instance;
     VkDevice device;
@@ -29,6 +29,7 @@ public:
     void render() override;
 
 private:
+    void cleanup();
     void createInstance();
     void createSurface();
     void pickPhysicalDevice();
@@ -44,6 +45,8 @@ private:
     void drawFrame();
     void recreateSwapChain();
     void cleanupSwapChain();
+
+    std::shared_ptr<Scene> scene;
 
     std::vector<char> readFile(const std::string& filepath);
     VkShaderModule createShaderModule(const std::vector<char>& code);
