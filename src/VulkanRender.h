@@ -31,6 +31,7 @@ public:
 
 private:
 
+    std::vector<Vertex3D_UV> verticesVectorFromMap(std::shared_ptr<Map> map);
     void updateUniformBuffer(VkDeviceMemory uniformBufferMemory, VkDevice device);
 
     uint32_t submissionNr = 0;

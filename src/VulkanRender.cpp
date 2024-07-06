@@ -332,68 +332,85 @@ VkFormat findDepthFormat(VkPhysicalDevice physicalDevice) {
       VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 };
 
+std::vector<Vertex3D_UV> VulkanRender::verticesVectorFromMap(std::shared_ptr<Map> map) {
+    std::vector<Vertex3D_UV> vertices;
+    float cubeSize = 1.f;
 
+    for (int y = 0; y < map->height; ++y) {
+        for (int x = 0; x < map->width; ++x) {
+            float cubeY0 = map->isSolid(x, y) ? 0 : -cubeSize;
+            float cubeX0 = -cubeSize + x * cubeSize;
+            float cubeZ0 = -1.f - y * cubeSize;
+
+            float texX0 = 0.0f;
+            float texY0 = 0.0f;
+            float texX1 = 1.0f;
+            float texY1 = 1.0f;
+
+            // Front face
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY1}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY1}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX1, texY0}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX0, texY0}});
+            
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY1}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX1, texY0}});
+            
+            // Back face
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY1}});
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0 + cubeSize}, {texX0, texY1}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY0}});
+            
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY1}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY0}});
+            
+            // Top face
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX0, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX1, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY1}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY1}});
+            
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX0, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY1}});
+            
+            // Bottom face
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY1}});
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0 + cubeSize}, {texX0, texY1}});
+            
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY1}});
+            
+            // Left face
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY1}});
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0 + cubeSize}, {texX0, texY0}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY0}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0}, {texX1, texY1}});
+            
+            vertices.push_back({{cubeX0, cubeY0, cubeZ0}, {texX0, texY1}});
+            vertices.push_back({{cubeX0, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX1, texY0}});
+            
+            // Right face
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY1}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0 + cubeSize}, {texX1, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY0}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0}, {texX0, texY1}});
+            
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0, cubeZ0}, {texX1, texY1}});
+            vertices.push_back({{cubeX0 + cubeSize, cubeY0 + cubeSize, cubeZ0 + cubeSize}, {texX0, texY0}});
+        }
+    }
+
+    return vertices;
+}
 
 int VulkanRender::start(SDL_Window *window) try {
   const uint32_t vertexBufferBinding = 0;
 
-  this->cube = {
-
-      // Front face - два треугольника
-      {{{-1.0f, -1.0f, 1.0f}}, {{0.0f, 1.0f}}}, // Bottom left
-      {{{1.0f, -1.0f, 1.0f}}, {{1.0f, 1.0f}}},  // Bottom right
-      {{{1.0f, 1.0f, 1.0f}}, {{1.0f, 0.0f}}},   // Top right
-
-      {{{-1.0f, -1.0f, 1.0f}}, {{0.0f, 1.0f}}}, // Bottom left
-      {{{1.0f, 1.0f, 1.0f}}, {{1.0f, 0.0f}}},   // Top right
-      {{{-1.0f, 1.0f, 1.0f}}, {{0.0f, 0.0f}}},  // Top left
-
-      // Back face - два треугольника (reverse texture coordinates)
-      {{{1.0f, -1.0f, -1.0f}}, {{1.0f, 1.0f}}},  // Bottom right
-      {{{-1.0f, -1.0f, -1.0f}}, {{0.0f, 1.0f}}}, // Bottom left
-      {{{-1.0f, 1.0f, -1.0f}}, {{0.0f, 0.0f}}},  // Top left
-
-      {{{1.0f, -1.0f, -1.0f}}, {{1.0f, 1.0f}}}, // Bottom right
-      {{{-1.0f, 1.0f, -1.0f}}, {{0.0f, 0.0f}}}, // Top left
-      {{{1.0f, 1.0f, -1.0f}}, {{1.0f, 0.0f}}},  // Top right
-
-      // Left face - два треугольника
-      {{{-1.0f, -1.0f, -1.0f}}, {{0.0f, 1.0f}}}, // Bottom front
-      {{{-1.0f, -1.0f, 1.0f}}, {{1.0f, 1.0f}}},  // Bottom back
-      {{{-1.0f, 1.0f, 1.0f}}, {{1.0f, 0.0f}}},   // Top back
-
-      {{{-1.0f, -1.0f, -1.0f}}, {{0.0f, 1.0f}}}, // Bottom front
-      {{{-1.0f, 1.0f, 1.0f}}, {{1.0f, 0.0f}}},   // Top back
-      {{{-1.0f, 1.0f, -1.0f}}, {{0.0f, 0.0f}}},  // Top front
-
-      // Right face - два треугольника
-      {{{1.0f, -1.0f, 1.0f}}, {{0.0f, 1.0f}}},  // Bottom front
-      {{{1.0f, -1.0f, -1.0f}}, {{1.0f, 1.0f}}}, // Bottom back
-      {{{1.0f, 1.0f, -1.0f}}, {{1.0f, 0.0f}}},  // Top back
-
-      {{{1.0f, -1.0f, 1.0f}}, {{0.0f, 1.0f}}}, // Bottom front
-      {{{1.0f, 1.0f, -1.0f}}, {{1.0f, 0.0f}}}, // Top back
-      {{{1.0f, 1.0f, 1.0f}}, {{0.0f, 0.0f}}},  // Top front
-
-      // Top face - два треугольника
-      {{{-1.0f, 1.0f, 1.0f}}, {{0.0f, 1.0f}}}, // Front left
-      {{{1.0f, 1.0f, 1.0f}}, {{1.0f, 1.0f}}},  // Front right
-      {{{1.0f, 1.0f, -1.0f}}, {{1.0f, 0.0f}}}, // Back right
-
-      {{{-1.0f, 1.0f, 1.0f}}, {{0.0f, 1.0f}}},  // Front left
-      {{{1.0f, 1.0f, -1.0f}}, {{1.0f, 0.0f}}},  // Back right
-      {{{-1.0f, 1.0f, -1.0f}}, {{0.0f, 0.0f}}}, // Back left
-
-      // Bottom face - два треугольника
-      {{{-1.0f, -1.0f, -1.0f}}, {{0.0f, 1.0f}}}, // Front left
-      {{{1.0f, -1.0f, -1.0f}}, {{1.0f, 1.0f}}},  // Front right
-      {{{1.0f, -1.0f, 1.0f}}, {{1.0f, 0.0f}}},   // Back right
-
-      {{{-1.0f, -1.0f, -1.0f}}, {{0.0f, 1.0f}}}, // Front left
-      {{{1.0f, -1.0f, 1.0f}}, {{1.0f, 0.0f}}},   // Back right
-      {{{-1.0f, -1.0f, 1.0f}}, {{0.0f, 0.0f}}}   // Back left
-
-  };
+  std::vector<Vertex3D_UV> verticesVector = verticesVectorFromMap(scene->getMap());
+  cube = verticesVector;
 
   supportedLayers = enumerate<VkInstance, VkLayerProperties>();
   vector<const char *> requestedLayers;
@@ -1119,15 +1136,20 @@ void VulkanRender::updateUniformBuffer(VkDeviceMemory uniformBufferMemory, VkDev
                    .count();
 
   glm::mat4 model = glm::mat4(1.f);
-  model = glm::translate(model, glm::vec3(0.0f, 0.0f, -6.0f));
-  model = glm::rotate(model, time * glm::radians(90.0f),
-                      glm::vec3(0.5f, 1.0f, 0.4f));
+  auto camera = scene->getCamera();
+  float *rawView = (float *)camera->viewMatrix()->glRepresentation();
   glm::mat4 view = glm::mat4(1.f);
+
+  for (int i = 0; i < 4; ++i) {
+      for (int j = 0; j < 4; ++j) {
+          view[i][j] = rawView[i * 4 + j];
+      }
+  }  
 
   float aspect = (float)screenWidth / (float)screenHeight;
   glm::mat4 proj =
       glm::perspective(glm::radians(45.0f), aspect, 0.00001f, 100000.0f);
-  proj[1][1] *= -1; // Invert Y coordinate for Vulkan
+  proj[1][1] *= -1;
 
   UniformBufferObject ubo{};
   ubo.mvp = proj * view * model;
@@ -2791,7 +2813,7 @@ void VulkanRender::setWindow(SDL_Window *window) {
 }
 
 void VulkanRender::setScene(std::shared_ptr<Scene> scene) {
-
+  this->scene = scene;
 }
 
 void VulkanRender::render() {
