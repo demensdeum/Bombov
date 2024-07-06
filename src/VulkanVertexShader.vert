@@ -1,17 +1,15 @@
-#version 310 es
+#version 450
 
-layout(location = 0) in vec4 vertex;
-layout(location = 1) in vec2 uvIn;
-layout(location = 0) out vec2 uvOut;
+layout (location = 0) in vec3 inPos;
+layout (location = 1) in vec2 inUV;
 
-layout(set = 0, binding = 0) uniform UBO {
-    mat4 projectionMatrix;
-    mat4 viewMatrix;
-    mat4 modelMatrix;
+layout(binding = 0) uniform UniformBufferObject {
+    mat4 mvp;
 } ubo;
 
-void main() {
-    gl_Position = ubo.projectionMatrix * ubo.viewMatrix * ubo.modelMatrix * vertex;
-    // gl_Position = vertex;
-    uvOut = uvIn;
+layout (location = 0) smooth out vec2 outUV;
+
+void main(){
+	outUV = inUV;
+	gl_Position = ubo.mvp * vec4(inPos, 1.0);
 }

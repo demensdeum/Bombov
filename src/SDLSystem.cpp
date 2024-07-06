@@ -56,12 +56,12 @@ void SDLSystem::initializeVulkan() {
 }
 
 void SDLSystem::quit() {
-    auto vulkanRender = static_pointer_cast<VulkanRender>(render);
-    vkDestroyDevice(vulkanRender->device, nullptr);
-    vkDestroyInstance(vulkanRender->instance, nullptr);
-    SDL_DestroyWindow(window);
-    SDL_Vulkan_UnloadLibrary();    
-    SDL_Quit();    
+    // auto vulkanRender = static_pointer_cast<VulkanRender>(render);
+    // vkDestroyDevice(vulkanRender->device, nullptr);
+    // vkDestroyInstance(vulkanRender->instance, nullptr);
+    // SDL_DestroyWindow(window);
+    // SDL_Vulkan_UnloadLibrary();    
+    // SDL_Quit();    
 }
 
 void SDLSystem::initializeOpenGL() {

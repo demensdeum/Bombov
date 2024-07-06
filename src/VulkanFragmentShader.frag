@@ -1,15 +1,11 @@
-#version 310 es
-precision mediump int;
-precision mediump float;
+#version 450
 
-// Specify locations for user inputs and outputs
-layout(location = 0) in mediump vec2 uvOut;
-layout(location = 0) out vec4 fragColor;
+layout (location = 0) smooth in vec2 uv;
 
-// Specify binding for the sampler uniform
-layout(binding = 0) uniform sampler2D uTexture;
+layout(set = 0, binding = 1) uniform sampler2D textureSampler;
 
-void main() {
-    fragColor = texture(uTexture, uvOut);
-    //fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+layout (location = 0) out vec4 outColor;
+
+void main(){
+	 outColor = texture(textureSampler, uv);
 }

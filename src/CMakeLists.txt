@@ -13,7 +13,6 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(Vulkan REQUIRED)
 
-
 include_directories(. ./Thirdparty)
 
 file(GLOB_RECURSE SOURCE_FILES
