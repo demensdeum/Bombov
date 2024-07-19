@@ -8,6 +8,7 @@
 #include <SDL2/SDL_vulkan.h>
 #define GLFW_INCLUDE_VULKAN
 #include <vulkan/vulkan.h>
+#include "BgfxRender.h"
 
 namespace DemensDeum::Bombov {
 
@@ -32,9 +33,27 @@ void SDLSystem::init(GraphicsApiType graphicsApiType) {
             initializeVulkan();
             break;
         case BGFX:
-            throw std::runtime_error("BGFX render does not implemented");
+            initializeBgfx();
             break;
     }
+}
+
+void SDLSystem::initializeBgfx() {
+    const char *windowTitle = "Bombov (Bgfx)";
+
+    SDL_Vulkan_LoadLibrary(nullptr);
+    SDL_Window* window = SDL_CreateWindow(
+        windowTitle, 
+        SDL_WINDOWPOS_UNDEFINED, 
+        SDL_WINDOWPOS_UNDEFINED, 
+        screenWidth, 
+        screenHeight, 
+        SDL_WINDOW_VULKAN
+    );
+    
+    auto render = std::make_shared<BgfxRender>();
+    render->setWindow(window);
+    this->render = render;
 }
 
 void SDLSystem::initializeVulkan() {

@@ -28,6 +28,7 @@ public:
 private:
     void initializeOpenGL();
     void initializeVulkan();
+    void initializeBgfx();
 };
 
 }
