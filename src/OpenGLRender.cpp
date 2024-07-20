@@ -205,7 +205,7 @@ void OpenGLRender::render() {
 	GLuint vertexShaderID, fragmentShaderID, GeometryShaderID;
 	vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 
-	auto vc = vertexShadersCode.c_str();
+	auto vc = vertexShaderCode.c_str();
 	glShaderSource(vertexShaderID, 1, &vc, NULL);
 
 	glCompileShader(vertexShaderID);
@@ -213,7 +213,7 @@ void OpenGLRender::render() {
 	CheckCompileErrors(vertexShaderID, "Vertex");
 
 	fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-	auto fc = fragmentShadersCode.c_str();
+	auto fc = fragmentShaderCode.c_str();
 	glShaderSource(fragmentShaderID, 1, &fc, NULL);
 	glCompileShader(fragmentShaderID);
 	CheckCompileErrors(fragmentShaderID, "Fragment");

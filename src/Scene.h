@@ -9,7 +9,8 @@ namespace DemensDeum::Bombov {
 class Scene {
 
 public:
-    Scene();
+    const std::string name;
+    Scene(const std::string name);
     std::shared_ptr<Camera> getCamera();
     std::shared_ptr<Map> getMap();
 

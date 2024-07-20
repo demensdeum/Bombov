@@ -1,4 +1,4 @@
-const std::string vertexShadersCode =
+const std::string vertexShaderCode =
     R"(#version 100
 attribute vec4 vertex;
 attribute vec2 uvIn;
@@ -14,7 +14,7 @@ void main() {
     uvOut = uvIn;
 })";
 
-const std::string fragmentShadersCode = 
+const std::string fragmentShaderCode = 
     R"(#version 100
     precision mediump int;
     precision mediump float;

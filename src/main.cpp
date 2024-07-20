@@ -1,6 +1,7 @@
 #include <iostream>
 #include <print> 
 #include <memory>
+#include <chrono>
 #include "OpenGLRender.h"
 #include "Context.h"
 #include "ControllerType.h"
@@ -11,7 +12,9 @@
 using namespace DemensDeum::Bombov;
 
 int main(int argc, char **argv) {
- 
+    constexpr int FPS = 60;
+    constexpr std::chrono::milliseconds frameDuration(1000 / FPS);
+
     std::print("Hello Bombov!\n");
 
     auto system = std::make_shared<SDLSystem>();
@@ -29,10 +32,18 @@ int main(int argc, char **argv) {
     context->setController(InGameController, startController);
     context->switchCurrentController(InGameController);
 
-    while (*isRun && !system->pressedButtons.exitFromGame) {
-        context->step();
-    }
-    system->quit();
+    auto lastTime = std::chrono::steady_clock::now();
 
+    while (*isRun && !system->pressedButtons.exitFromGame) {
+        auto currentTime = std::chrono::steady_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime);
+
+        if (elapsed >= frameDuration) {
+            context->step();
+            lastTime = currentTime;
+        }
+    }
+
+    system->quit();
     std::print("Bye Bombov!\n");
 }

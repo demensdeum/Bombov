@@ -10,7 +10,7 @@ Context::Context(
 ) : isRun(isRun), 
     system(system) {
         globals = std::make_shared<std::unordered_map<std::string, std::string>>();
-        scene = std::make_shared<Scene>();
+        scene = std::make_shared<Scene>("Default");
     }
 
 void Context::setController(ControllerType controllerType, std::shared_ptr<Controller> controller) {

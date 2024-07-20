@@ -4,7 +4,7 @@
 
 namespace DemensDeum::Bombov {
 
-Scene::Scene() {
+Scene::Scene(const std::string name) : name(name) {
     camera = std::make_shared<Camera>();
     camera->position->x = -2;
     camera->position->y = -0.5;
