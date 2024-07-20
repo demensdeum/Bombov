@@ -12,8 +12,8 @@
 
 namespace DemensDeum::Bombov {
 
-uint SDLSystem::screenWidth = 640;
-uint SDLSystem::screenHeight = 480;
+uint64_t SDLSystem::screenWidth = 1280;
+uint64_t SDLSystem::screenHeight = 720;
 float SDLSystem::screenAspect = (float)screenWidth / (float)screenHeight;
 
 void SDLSystem::init(GraphicsApiType graphicsApiType) {
@@ -39,7 +39,12 @@ void SDLSystem::init(GraphicsApiType graphicsApiType) {
 }
 
 void SDLSystem::initializeBgfx() {
-    const char *windowTitle = "Bombov (Bgfx)";
+
+#if BGFX_MODE == BGFX_MODE_VULKAN
+    const char *windowTitle = "Bombov (Bgfx - Vulkan)";
+#elif BGFX_MODE == BGFX_MODE_OPENGL
+    const char *windowTitle = "Bombov (Bgfx - OpenGL)";
+#endif
 
     SDL_Vulkan_LoadLibrary(nullptr);
     SDL_Window* window = SDL_CreateWindow(

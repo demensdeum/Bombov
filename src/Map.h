@@ -7,18 +7,18 @@
 namespace DemensDeum::Bombov {
 class Map {
 public:
-    Map(const uint width, const uint height);
-    void setTile(std::shared_ptr<DemensDeum::Bombov::Tile> tile, const uint x, const uint y);
-    std::shared_ptr<DemensDeum::Bombov::Tile> getTile(const uint x, const uint y);
+    Map(const uint64_t width, const uint64_t height);
+    void setTile(std::shared_ptr<DemensDeum::Bombov::Tile> tile, const uint64_t x, const uint64_t y);
+    std::shared_ptr<DemensDeum::Bombov::Tile> getTile(const uint64_t x, const uint64_t y);
 
-    void setSolid(const bool isSolid, uint x, uint y);
-    bool isSolid(const uint x, const uint y);
+    void setSolid(const bool isSolid, uint64_t x, uint64_t y);
+    bool isSolid(const uint64_t x, const uint64_t y);
 
-    const uint width;
-    const uint height;
+    const uint64_t width;
+    const uint64_t height;
 
 private:
-    void guardBounds(const uint x, const uint y);
+    void guardBounds(const uint64_t x, const uint64_t y);
     std::vector<std::vector<std::shared_ptr<DemensDeum::Bombov::Tile>>> tiles;
 };
 };

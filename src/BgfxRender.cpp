@@ -117,6 +117,11 @@ namespace DemensDeum::Bombov
 
         Vertex3D_UV::init();
 
+        u_modelMatrix = bgfx::createUniform("u_modelMatrix", bgfx::UniformType::Mat4);
+        u_viewMatrix = bgfx::createUniform("u_viewMatrix", bgfx::UniformType::Mat4);
+        u_projMatrix = bgfx::createUniform("u_projectionMatrix", bgfx::UniformType::Mat4);
+
+
 #if BGFX_MODE == BGFX_MODE_OPENGL
         vertexShaderCode = readFile("BgfxVertexShader.glsl");
 #elif BGFX_MODE == BGFX_MODE_VULKAN
@@ -152,9 +157,6 @@ namespace DemensDeum::Bombov
             throw std::runtime_error("Failed to create program");
         }
 
-        u_modelMatrix = bgfx::createUniform("u_modelMatrix", bgfx::UniformType::Mat4);
-        u_viewMatrix = bgfx::createUniform("u_viewMatrix", bgfx::UniformType::Mat4);
-        u_projMatrix = bgfx::createUniform("u_projectionMatrix", bgfx::UniformType::Mat4);
     }
 
     std::vector<BgfxRender::Vertex3D_UV> BgfxRender::verticesVectorFromMap(std::shared_ptr<Map> map)

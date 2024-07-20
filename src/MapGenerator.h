@@ -8,7 +8,7 @@ namespace DemensDeum::Bombov {
 class MapGenerator {
 
 public:
-    static std::shared_ptr<Map> box(uint width, uint height);
+    static std::shared_ptr<Map> box(uint64_t width, uint64_t height);
 
 };
 
